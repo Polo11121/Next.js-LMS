@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
 import {
   Card,
   CardContent,
@@ -48,8 +47,8 @@ export const LoginForm = () => {
         type: "sign-in",
         fetchOptions: {
           onSuccess: () => {
-            toast.success("Verification OTP sent to your email");
             router.push(`/verify-email?email=${email}`);
+            toast.success("Verification OTP sent to your email");
           },
           onError: (error) => {
             toast.error(error.error.message || "Something went wrong");

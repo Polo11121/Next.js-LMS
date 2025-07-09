@@ -20,7 +20,7 @@ const AuthLayout = async ({ children }: PropsWithChildren) => {
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center">
       <Link
-        href="-"
+        href="/"
         className={buttonVariants({
           variant: "outline",
           className: "absolute top-4 left-4",
