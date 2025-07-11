@@ -21,7 +21,7 @@ export const Navbar = () => {
               href="/"
               className="text-primary hover:text-primary/90 flex items-center gap-2"
             >
-              <Image src={logo} alt="logo" className="size-9" />
+              <Image src={logo} alt="Logo" className="size-9" />
               <span className="font-bold">Michael.LMS</span>
             </Link>
             <NavbarDesktop />
