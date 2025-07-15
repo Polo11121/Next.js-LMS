@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
 import { PlusIcon, SparkleIcon } from "lucide-react";
@@ -29,8 +30,15 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { TextEditor } from "@/components/text-editor/text-editor";
+import { FileUploader } from "@/components/file-uploader/file-uploader";
+import { tryCatch } from "@/hooks/try-catch";
+import { createCourse } from "../actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const CreateCourseForm = () => {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const form = useForm<CourseSchema>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -53,8 +61,26 @@ export const CreateCourseForm = () => {
     form.setValue("slug", slug, { shouldValidate: true });
   };
 
-  const onSubmit = (data: CourseSchema) => {
-    console.log(data);
+  const onSubmit = (values: CourseSchema) => {
+    startTransition(async () => {
+      const { data, error } = await tryCatch(createCourse(values));
+
+      if (error) {
+        toast.error("Failed to create course");
+        return;
+      }
+
+      if (data?.status === "error") {
+        toast.error(data.message);
+        return;
+      }
+
+      if (data?.status === "success") {
+        toast.success("Course created successfully");
+        form.reset();
+        router.push("/admin/courses");
+      }
+    });
   };
 
   return (
@@ -67,7 +93,7 @@ export const CreateCourseForm = () => {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input placeholder="Title" {...field} />
+                <Input placeholder="Title" disabled={isPending} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,7 +107,7 @@ export const CreateCourseForm = () => {
               <FormItem className="flex-1 w-full">
                 <FormLabel>Slug</FormLabel>
                 <FormControl>
-                  <Input placeholder="Slug" {...field} />
+                  <Input placeholder="Slug" disabled={isPending} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -93,6 +119,7 @@ export const CreateCourseForm = () => {
               type="button"
               variant="outline"
               onClick={handleGenerateSlug}
+              disabled={isPending}
             >
               Generate Slug <SparkleIcon className="size-4" />
             </Button>
@@ -109,6 +136,7 @@ export const CreateCourseForm = () => {
                 <Textarea
                   className="min-h-[120px]"
                   placeholder="Small Description"
+                  disabled={isPending}
                   {...field}
                 />
               </FormControl>
@@ -124,6 +152,7 @@ export const CreateCourseForm = () => {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <TextEditor
+                  isDisabled={isPending}
                   value={field.value}
                   onChange={field.onChange}
                   isError={!!form.formState.errors.description}
@@ -140,7 +169,12 @@ export const CreateCourseForm = () => {
             <FormItem className="flex-1">
               <FormLabel>Thumbnail Image</FormLabel>
               <FormControl>
-                <Input placeholder="Thumbnail Image" {...field} />
+                <FileUploader
+                  isDisabled={isPending}
+                  value={field.value}
+                  onChange={field.onChange}
+                  isError={!!form.formState.errors.fileKey}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,7 +189,11 @@ export const CreateCourseForm = () => {
                 <FormLabel>Category</FormLabel>
                 <FormControl>
                   <Select {...field} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger
+                      disabled={isPending}
+                      className="w-full"
+                      aria-invalid={!!form.formState.errors.category}
+                    >
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -179,7 +217,11 @@ export const CreateCourseForm = () => {
                 <FormLabel>Level</FormLabel>
                 <FormControl>
                   <Select {...field} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger
+                      disabled={isPending}
+                      className="w-full"
+                      aria-invalid={!!form.formState.errors.category}
+                    >
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -200,11 +242,12 @@ export const CreateCourseForm = () => {
             name="duration"
             render={({ field }) => (
               <FormItem className="flex-1 w-full">
-                <FormLabel>Duration</FormLabel>
+                <FormLabel>Duration (minutes)</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Duration (hours)"
+                    placeholder="Duration (minutes)"
                     type="number"
+                    disabled={isPending}
                     {...field}
                   />
                 </FormControl>
@@ -217,9 +260,14 @@ export const CreateCourseForm = () => {
             name="price"
             render={({ field }) => (
               <FormItem className="flex-1 w-full">
-                <FormLabel>Price</FormLabel>
+                <FormLabel>Price ($)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Price ($)" type="number" {...field} />
+                  <Input
+                    placeholder="Price ($)"
+                    type="number"
+                    disabled={isPending}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -234,7 +282,11 @@ export const CreateCourseForm = () => {
               <FormLabel>Status</FormLabel>
               <FormControl>
                 <Select {...field} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger
+                    disabled={isPending}
+                    className="w-full"
+                    aria-invalid={!!form.formState.errors.category}
+                  >
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -250,7 +302,7 @@ export const CreateCourseForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">
+        <Button type="submit" disabled={isPending} isLoading={isPending}>
           Create Course <PlusIcon className="size-4" />
         </Button>
       </form>

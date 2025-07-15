@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 
 type MenubarProps = {
   editor: Editor | null;
+  isDisabled?: boolean;
 };
 
 type ButtonConfig = {
@@ -36,7 +37,7 @@ type ButtonConfig = {
   disabled?: boolean;
 };
 
-export const Menubar = ({ editor }: MenubarProps) => {
+export const Menubar = ({ editor, isDisabled }: MenubarProps) => {
   if (!editor) {
     return null;
   }
@@ -143,6 +144,7 @@ export const Menubar = ({ editor }: MenubarProps) => {
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <Toggle
+                    disabled={isDisabled}
                     size="sm"
                     pressed={isActive}
                     onPressedChange={handleClick}
@@ -171,6 +173,7 @@ export const Menubar = ({ editor }: MenubarProps) => {
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
                   <Toggle
+                    disabled={isDisabled}
                     size="sm"
                     pressed={isActive}
                     onPressedChange={handleClick}
@@ -202,7 +205,7 @@ export const Menubar = ({ editor }: MenubarProps) => {
                     variant="ghost"
                     type="button"
                     onClick={handleClick}
-                    disabled={disabled}
+                    disabled={disabled || isDisabled}
                   >
                     <Icon />
                   </Button>

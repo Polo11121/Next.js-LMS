@@ -11,9 +11,15 @@ type TextEditorProps = {
   value: string;
   onChange: (value: string) => void;
   isError: boolean;
+  isDisabled?: boolean;
 };
 
-export const TextEditor = ({ value, onChange, isError }: TextEditorProps) => {
+export const TextEditor = ({
+  value,
+  onChange,
+  isError,
+  isDisabled,
+}: TextEditorProps) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const editor = useEditor({
@@ -42,8 +48,8 @@ export const TextEditor = ({ value, onChange, isError }: TextEditorProps) => {
         isError && "border-destructive"
       )}
     >
-      <Menubar editor={editor} />
-      <EditorContent editor={editor} />
+      <Menubar editor={editor} isDisabled={isDisabled} />
+      <EditorContent editor={editor} disabled={isDisabled} />
     </div>
   );
 };

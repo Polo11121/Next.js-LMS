@@ -10,15 +10,17 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
     ARCJET_API_KEY: z.string().min(1),
+    AWS_ACCESS_KEY_ID: z.string().min(1),
+    AWS_SECRET_ACCESS_KEY: z.string().min(1),
+    AWS_ENDPOINT_URL_S3: z.string().url(),
+    AWS_ENDPOINT_URL_IAM: z.string().url(),
+    AWS_REGION: z.string().min(1),
   },
-  client: {},
-  runtimeEnv: {
-    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-    DATABASE_URL: process.env.DATABASE_URL,
-    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
-    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-    RESEND_API_KEY: process.env.RESEND_API_KEY,
-    ARCJET_API_KEY: process.env.ARCJET_API_KEY,
+  client: {
+    NEXT_PUBLIC_S3_BUCKET_NAMES_IMAGES: z.string().min(1),
+  },
+  experimental__runtimeEnv: {
+    NEXT_PUBLIC_S3_BUCKET_NAMES_IMAGES:
+      process.env.NEXT_PUBLIC_S3_BUCKET_NAMES_IMAGES,
   },
 });
