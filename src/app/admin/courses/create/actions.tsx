@@ -1,25 +1,51 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/data/admin/require-admin";
 import { Course } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { ActionResponse } from "@/lib/types";
 import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
-import { headers } from "next/headers";
+import { request } from "@arcjet/next";
+import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+
+const aj = arcjet
+  .withRule(
+    detectBot({
+      mode: "LIVE",
+      allow: [],
+    })
+  )
+  .withRule(
+    fixedWindow({
+      mode: "LIVE",
+      window: "1m",
+      max: 5,
+    })
+  );
 
 export const createCourse = async (
   formData: CourseSchema
 ): Promise<ActionResponse<Course>> => {
+  const session = await requireAdmin();
+
   try {
-    const user = await auth.api.getSession({
-      headers: await headers(),
+    const req = await request();
+    const result = await aj.protect(req, {
+      fingerprint: session.user.id as string,
     });
 
-    if (!user) {
-      return {
-        status: "error",
-        message: "Unauthorized",
-      };
+    if (result.isDenied()) {
+      if (result.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "You have been blocked due to rate limit",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Looks like you are a bot",
+        };
+      }
     }
 
     const validatedData = courseSchema.safeParse(formData);
@@ -34,7 +60,7 @@ export const createCourse = async (
     const createdCourse = await prisma.course.create({
       data: {
         ...validatedData.data,
-        userId: user.user.id,
+        userId: session.user.id,
       },
     });
 
