@@ -37,7 +37,7 @@ export const TextEditor = ({
     onFocus: () => setIsFocused(true),
     onBlur: () => setIsFocused(false),
     onUpdate: ({ editor }) => onChange(JSON.stringify(editor.getJSON())),
-    content: value,
+    content: value ? JSON.parse(value) : "",
   });
 
   return (

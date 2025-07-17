@@ -1,10 +1,6 @@
 "use client";
 
 import { useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
-import { PlusIcon, SparkleIcon } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormField,
@@ -14,44 +10,45 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { TextEditor } from "@/components/text-editor/text-editor";
+import { FileUploader } from "@/components/file-uploader/file-uploader";
+import { editCourse } from "@/app/admin/courses/[courseId]/edit/actions";
+import { Button } from "@/components/ui/button";
+import { PencilIcon, SparkleIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
+import { useRouter } from "next/navigation";
+import { tryCatch } from "@/functions/try-catch";
+import { toast } from "sonner";
 import {
   CourseCategory,
   CourseLevel,
   CourseStatus,
 } from "@/lib/generated/prisma";
-import slugify from "slugify";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
-  SelectValue,
-  SelectTrigger,
-  SelectItem,
   SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { TextEditor } from "@/components/text-editor/text-editor";
-import { FileUploader } from "@/components/file-uploader/file-uploader";
-import { tryCatch } from "@/functions/try-catch";
-import { createCourse } from "@/app/admin/courses/create/actions";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { AdminCourse } from "@/data/admin/get-admin-course";
+import slugify from "slugify";
 
-export const CreateCourseForm = () => {
+type EditCourseFormProps = {
+  courseId: string;
+  course: AdminCourse;
+};
+
+export const EditCourseForm = ({ courseId, course }: EditCourseFormProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const form = useForm<CourseSchema>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      fileKey: "",
-      price: 0,
-      duration: 0,
-      level: CourseLevel.Beginner,
-      category: CourseCategory.Development,
-      smallDescription: "",
-      slug: "",
-      status: CourseStatus.Draft,
+      ...course,
     },
   });
 
@@ -63,10 +60,10 @@ export const CreateCourseForm = () => {
 
   const onSubmit = (values: CourseSchema) => {
     startTransition(async () => {
-      const { data, error } = await tryCatch(createCourse(values));
+      const { data, error } = await tryCatch(editCourse(values, courseId));
 
       if (error) {
-        toast.error("Failed to create course");
+        toast.error("Failed to edit course");
         return;
       }
 
@@ -76,12 +73,14 @@ export const CreateCourseForm = () => {
       }
 
       if (data?.status === "success") {
-        toast.success("Course created successfully");
+        toast.success("Course edited successfully");
         form.reset();
         router.push("/admin/courses");
       }
     });
   };
+
+  console.log(form.watch("description"));
 
   return (
     <Form {...form}>
@@ -303,7 +302,7 @@ export const CreateCourseForm = () => {
           )}
         />
         <Button type="submit" disabled={isPending} isLoading={isPending}>
-          Create Course <PlusIcon className="size-4" />
+          Edit Course <PencilIcon className="size-4" />
         </Button>
       </form>
     </Form>

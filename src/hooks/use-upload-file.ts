@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { v4 as uuid } from "uuid";
 import { toast } from "sonner";
 import { FileState } from "@/lib/types";
+import { constructUrl } from "@/functions/construct-url";
 
 type UseUploadFileProps = {
   onChange?: (value: string) => void;
@@ -17,6 +18,7 @@ export const useUploadFile = ({
   value,
   isDisabled,
 }: UseUploadFileProps) => {
+  const fileUrl = constructUrl(value ?? "");
   const [fileState, setFileState] = useState<FileState>({
     id: null,
     file: null,
@@ -25,6 +27,7 @@ export const useUploadFile = ({
     isDeleting: false,
     isError: false,
     key: value,
+    objectUrl: fileUrl,
   });
 
   const uploadFile = useCallback(
@@ -50,12 +53,17 @@ export const useUploadFile = ({
         });
 
         if (!presignedUrl.ok) {
+          if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+            URL.revokeObjectURL(fileState.objectUrl);
+          }
+
           toast.error("Failed to upload file");
           setFileState((prev) => ({
             ...prev,
             isUploading: false,
             progress: 0,
             isError: true,
+            objectUrl: undefined,
           }));
           return;
         }
@@ -103,16 +111,21 @@ export const useUploadFile = ({
           xhr.send(file);
         });
       } catch {
+        if (fileState.objectUrl && !fileState.objectUrl.startsWith("http")) {
+          URL.revokeObjectURL(fileState.objectUrl);
+        }
+
         toast.error("Failed to upload file");
         setFileState((prev) => ({
           ...prev,
           isUploading: false,
           progress: 0,
           isError: true,
+          objectUrl: undefined,
         }));
       }
     },
-    [onChange]
+    [onChange, fileState.objectUrl]
   );
 
   const onDrop = useCallback(
@@ -222,7 +235,6 @@ export const useUploadFile = ({
       accept: {
         "image/*": [],
       },
-      onDropAccepted: (acceptedFiles) => onDrop(acceptedFiles),
       onDropRejected: (rejectedFiles) => {
         if (!rejectedFiles.length) {
           const tooManyFiles = rejectedFiles.find(
