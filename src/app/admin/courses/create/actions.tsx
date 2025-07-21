@@ -3,7 +3,7 @@
 import { requireAdmin } from "@/data/admin/require-admin";
 import { Course } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
-import { ActionResponse } from "@/lib/types";
+import { ActionResponseWithData } from "@/lib/types";
 import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
 import { request } from "@arcjet/next";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
@@ -25,7 +25,7 @@ const aj = arcjet
 
 export const createCourse = async (
   formData: CourseSchema
-): Promise<ActionResponse<Course>> => {
+): Promise<ActionResponseWithData<Course>> => {
   const session = await requireAdmin();
 
   try {
@@ -69,8 +69,7 @@ export const createCourse = async (
       message: "Course created successfully",
       data: createdCourse,
     };
-  } catch (error) {
-    console.error(error);
+  } catch {
     return {
       status: "error",
       message: "Failed to create course",

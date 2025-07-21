@@ -38,11 +38,10 @@ import { AdminCourse } from "@/data/admin/get-admin-course";
 import slugify from "slugify";
 
 type EditCourseFormProps = {
-  courseId: string;
   course: AdminCourse;
 };
 
-export const EditCourseForm = ({ courseId, course }: EditCourseFormProps) => {
+export const EditCourseForm = ({ course }: EditCourseFormProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const form = useForm<CourseSchema>({
@@ -60,7 +59,7 @@ export const EditCourseForm = ({ courseId, course }: EditCourseFormProps) => {
 
   const onSubmit = (values: CourseSchema) => {
     startTransition(async () => {
-      const { data, error } = await tryCatch(editCourse(values, courseId));
+      const { data, error } = await tryCatch(editCourse(values, course.id));
 
       if (error) {
         toast.error("Failed to edit course");
@@ -79,8 +78,6 @@ export const EditCourseForm = ({ courseId, course }: EditCourseFormProps) => {
       }
     });
   };
-
-  console.log(form.watch("description"));
 
   return (
     <Form {...form}>

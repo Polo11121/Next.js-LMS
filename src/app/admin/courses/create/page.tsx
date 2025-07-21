@@ -1,4 +1,3 @@
-import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,19 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeftIcon } from "lucide-react";
 import { CreateCourseForm } from "@/app/admin/courses/create/_components/create-course-form";
-import Link from "next/link";
+import { BackButton } from "@/components/back-button";
 
 const AdminCreateCoursePage = () => (
   <>
     <div className="flex items-center gap-4">
-      <Link
-        href="/admin/courses"
-        className={buttonVariants({ variant: "outline", size: "icon" })}
-      >
-        <ArrowLeftIcon className="size-4" />
-      </Link>
+      <BackButton href="/admin/courses" />
       <h1 className="text-2xl font-bold">Create Course</h1>
     </div>
     <Card>

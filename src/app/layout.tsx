@@ -30,7 +30,7 @@ const RootLayout = ({ children }: PropsWithChildren) => (
         disableTransitionOnChange
       >
         {children}
-        <Toaster />
+        <Toaster closeButton position="bottom-center" />
       </ThemeProvider>
     </body>
   </html>
