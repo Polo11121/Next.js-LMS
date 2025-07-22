@@ -1,9 +1,8 @@
 "use server";
 
 import { requireAdmin } from "@/data/admin/require-admin";
-import { Course } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
-import { ActionResponseWithData } from "@/lib/types";
+import { ActionResponse } from "@/lib/types";
 import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
 import { request } from "@arcjet/next";
 import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
@@ -25,7 +24,7 @@ const aj = arcjet
 
 export const createCourse = async (
   formData: CourseSchema
-): Promise<ActionResponseWithData<Course>> => {
+): Promise<ActionResponse> => {
   const session = await requireAdmin();
 
   try {
@@ -57,7 +56,7 @@ export const createCourse = async (
       };
     }
 
-    const createdCourse = await prisma.course.create({
+    await prisma.course.create({
       data: {
         ...validatedData.data,
         userId: session.user.id,
@@ -67,7 +66,6 @@ export const createCourse = async (
     return {
       status: "success",
       message: "Course created successfully",
-      data: createdCourse,
     };
   } catch {
     return {

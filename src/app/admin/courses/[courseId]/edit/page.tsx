@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAdminCourse } from "@/data/admin/get-admin-course";
 import { EditCourseForm } from "@/app/admin/courses/[courseId]/edit/_components/edit-course-form";
 import { CourseStructure } from "@/app/admin/courses/[courseId]/edit/_components/course-structure";
-import { BackButton } from "@/components/back-button";
+import { Heading } from "@/components/heading";
 
 type AdminEditCoursePageProps = {
   params: Promise<{ courseId: string }>;
@@ -21,13 +21,11 @@ const AdminEditCoursePage = async ({ params }: AdminEditCoursePageProps) => {
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-8">
-        <BackButton href="/admin/courses" />
-        <h1 className="text-3xl font-bold">
-          Edit Course{" "}
-          <span className="text-primary underline">{course.title}</span>
-        </h1>
-      </div>
+      <Heading
+        text="Edit Course"
+        href="/admin/courses"
+        underlineText={course.title}
+      />
       <Tabs defaultValue="basic-info" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="basic-info">Basic Info</TabsTrigger>
@@ -38,7 +36,7 @@ const AdminEditCoursePage = async ({ params }: AdminEditCoursePageProps) => {
             <CardHeader>
               <CardTitle>Basic Info</CardTitle>
               <CardDescription>
-                Provide basic information about the course
+                Provide basic information about the course.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -51,7 +49,7 @@ const AdminEditCoursePage = async ({ params }: AdminEditCoursePageProps) => {
             <CardHeader>
               <CardTitle>Course Structure</CardTitle>
               <CardDescription>
-                Here you can update your course structure
+                Here you can update your course structure.
               </CardDescription>
             </CardHeader>
             <CardContent>

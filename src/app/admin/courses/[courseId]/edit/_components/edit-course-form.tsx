@@ -21,7 +21,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
 import { useRouter } from "next/navigation";
 import { tryCatch } from "@/functions/try-catch";
-import { toast } from "sonner";
 import {
   CourseCategory,
   CourseLevel,
@@ -35,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AdminCourse } from "@/data/admin/get-admin-course";
+import { apiResponseHandler } from "@/lib/api-response-handler";
 import slugify from "slugify";
 
 type EditCourseFormProps = {
@@ -61,21 +61,15 @@ export const EditCourseForm = ({ course }: EditCourseFormProps) => {
     startTransition(async () => {
       const { data, error } = await tryCatch(editCourse(values, course.id));
 
-      if (error) {
-        toast.error("Failed to edit course");
-        return;
-      }
-
-      if (data?.status === "error") {
-        toast.error(data.message);
-        return;
-      }
-
-      if (data?.status === "success") {
-        toast.success("Course edited successfully");
-        form.reset();
-        router.push("/admin/courses");
-      }
+      apiResponseHandler({
+        error,
+        data,
+        successMessage: "Course edited successfully",
+        onSuccess: () => {
+          form.reset();
+          router.push("/admin/courses");
+        },
+      });
     });
   };
 
@@ -298,7 +292,12 @@ export const EditCourseForm = ({ course }: EditCourseFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isPending} isLoading={isPending}>
+        <Button
+          type="submit"
+          disabled={isPending}
+          isLoading={isPending}
+          className="w-full md:w-auto md:ml-auto flex justify-center"
+        >
           Edit Course <PencilIcon className="size-4" />
         </Button>
       </form>

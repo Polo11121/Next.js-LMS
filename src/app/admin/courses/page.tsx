@@ -1,10 +1,12 @@
+import { Suspense } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { getAdminCourses } from "@/data/admin/get-admin-courses";
-import { AdminCourseCard } from "@/app/admin/courses/_components/admin-course-card";
+import { AdminCoursesList } from "@/app/admin/courses/_components/admin-courses-list";
+import { AdminCoursesListLoader } from "@/app/admin/courses/_components/admin-courses-list-loader";
 import Link from "next/link";
 
-const AdminCoursesPage = async () => {
-  const courses = await getAdminCourses();
+const AdminCoursesPage = () => {
+  const coursesPromise = getAdminCourses();
 
   return (
     <>
@@ -14,11 +16,9 @@ const AdminCoursesPage = async () => {
           Create Course
         </Link>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-7">
-        {courses.map((course) => (
-          <AdminCourseCard key={course.id} course={course} />
-        ))}
-      </div>
+      <Suspense fallback={<AdminCoursesListLoader />}>
+        <AdminCoursesList coursesPromise={coursesPromise} />
+      </Suspense>
     </>
   );
 };

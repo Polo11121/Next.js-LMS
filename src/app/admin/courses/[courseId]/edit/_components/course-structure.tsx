@@ -5,6 +5,7 @@ import { DndContext, rectIntersection } from "@dnd-kit/core";
 import { AdminCourse } from "@/data/admin/get-admin-course";
 import { ChaptersList } from "@/app/admin/courses/[courseId]/edit/_components/chapters-list";
 import { useChaptersDnd } from "@/app/admin/courses/[courseId]/edit/hooks/use-chapters-dnd";
+import { CreateChapterDialog } from "@/app/admin/courses/[courseId]/edit/_components/create-chapter-dialog";
 
 type CourseStructureProps = {
   course: AdminCourse;
@@ -23,6 +24,7 @@ export const CourseStructure = ({ course }: CourseStructureProps) => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between border-b border-border">
           <CardTitle>Chapters</CardTitle>
+          <CreateChapterDialog courseId={course.id} />
         </CardHeader>
         <CardContent className="space-y-8">
           <ChaptersList

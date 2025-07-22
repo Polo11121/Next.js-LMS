@@ -4,11 +4,13 @@ import { RenderState } from "@/components/file-uploader/render-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { useUploadFile } from "@/hooks/use-upload-file";
 import { cn } from "@/lib/utils";
+import { FileType } from "@/lib/types";
 
 type FileUploaderProps = {
   value?: string;
   onChange?: (value: string) => void;
   isError?: boolean;
+  fileType: FileType;
   isDisabled?: boolean;
 };
 
@@ -17,9 +19,10 @@ export const FileUploader = ({
   value,
   isError,
   isDisabled,
+  fileType,
 }: FileUploaderProps) => {
   const { getRootProps, getInputProps, isDragActive, fileState, removeFile } =
-    useUploadFile({ onChange, value, isDisabled });
+    useUploadFile({ onChange, value, isDisabled, fileType });
 
   return (
     <Card
@@ -39,6 +42,7 @@ export const FileUploader = ({
           isDragActive={isDragActive}
           onRemoveFile={removeFile}
           isDisabled={isDisabled}
+          fileType={fileType}
         />
       </CardContent>
     </Card>

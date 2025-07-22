@@ -10,13 +10,9 @@ export type FileState = {
   fileType?: "image" | "video";
 };
 
-export type ActionResponseWithData<T> = {
-  status: "success" | "error";
-  message: string;
-  data?: T;
-};
-
 export type ActionResponse = {
   status: "success" | "error";
   message: string;
 };
+
+export type FileType = "image" | "video";

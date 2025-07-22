@@ -33,10 +33,12 @@ import { TextEditor } from "@/components/text-editor/text-editor";
 import { FileUploader } from "@/components/file-uploader/file-uploader";
 import { tryCatch } from "@/functions/try-catch";
 import { createCourse } from "@/app/admin/courses/create/actions";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { apiResponseHandler } from "@/lib/api-response-handler";
+import { useFireConfetti } from "@/hooks/use-fire-confetti";
 
 export const CreateCourseForm = () => {
+  const fireConfetti = useFireConfetti();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const form = useForm<CourseSchema>({
@@ -65,21 +67,17 @@ export const CreateCourseForm = () => {
     startTransition(async () => {
       const { data, error } = await tryCatch(createCourse(values));
 
-      if (error) {
-        toast.error("Failed to create course");
-        return;
-      }
-
-      if (data?.status === "error") {
-        toast.error(data.message);
-        return;
-      }
-
-      if (data?.status === "success") {
-        toast.success("Course created successfully");
-        form.reset();
-        router.push("/admin/courses");
-      }
+      apiResponseHandler({
+        error,
+        data,
+        successMessage: "Course created successfully",
+        errorMessage: "Failed to create course",
+        onSuccess: () => {
+          form.reset();
+          router.push("/admin/courses");
+          fireConfetti();
+        },
+      });
     });
   };
 
@@ -170,6 +168,7 @@ export const CreateCourseForm = () => {
               <FormLabel>Thumbnail Image</FormLabel>
               <FormControl>
                 <FileUploader
+                  fileType="image"
                   isDisabled={isPending}
                   value={field.value}
                   onChange={field.onChange}
@@ -302,7 +301,12 @@ export const CreateCourseForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isPending} isLoading={isPending}>
+        <Button
+          type="submit"
+          disabled={isPending}
+          isLoading={isPending}
+          className="w-full md:w-auto md:ml-auto flex justify-center"
+        >
           Create Course <PlusIcon className="size-4" />
         </Button>
       </form>

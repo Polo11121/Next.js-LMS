@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { CloudUploadIcon, ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FileState } from "@/lib/types";
+import { FileState, FileType } from "@/lib/types";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 
@@ -10,6 +10,7 @@ type RenderStateProps = {
   isDragActive: boolean;
   onRemoveFile: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isDisabled?: boolean;
+  fileType: FileType;
 };
 
 export const RenderState = ({
@@ -17,6 +18,7 @@ export const RenderState = ({
   isDragActive,
   onRemoveFile,
   isDisabled,
+  fileType,
 }: RenderStateProps) => {
   const { progress, objectUrl, isError, isUploading, file, isDeleting } =
     fileState;
@@ -52,13 +54,21 @@ export const RenderState = ({
 
   if (objectUrl) {
     return (
-      <div className="relative size-full">
-        <Image
-          src={objectUrl}
-          alt="Uploaded file"
-          fill
-          className="object-contain p-2"
-        />
+      <div className="relative group w-full h-full flex items-center justify-center">
+        {fileType === "image" ? (
+          <Image
+            src={objectUrl}
+            alt="Uploaded file"
+            fill
+            className="object-contain p-2"
+          />
+        ) : (
+          <video
+            src={objectUrl}
+            controls
+            className="rounded-md w-full h-full p-2"
+          />
+        )}
         <Button
           size="icon"
           className={cn("absolute top-0 right-0")}

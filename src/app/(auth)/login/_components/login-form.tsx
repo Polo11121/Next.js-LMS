@@ -62,7 +62,7 @@ export const LoginForm = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-xl">Welcome back!</CardTitle>
-        <CardDescription>Login with your Github Email Account</CardDescription>
+        <CardDescription>Login with your Github Email Account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <Button

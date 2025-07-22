@@ -29,7 +29,7 @@ export const AdminCourseCard = ({ course }: AdminCourseCardProps) => (
   <Card className="group relative py-0 gap-0">
     <div className="absolute top-2 right-2 z-10">
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon">
             <MoreVerticalIcon className="size-4" />
           </Button>

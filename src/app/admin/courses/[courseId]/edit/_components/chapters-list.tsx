@@ -17,9 +17,11 @@ import {
   ChevronRightIcon,
   FileTextIcon,
   GripVerticalIcon,
-  TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { CreateLessonDialog } from "@/app/admin/courses/[courseId]/edit/_components/create-lesson-dialog";
+import { DeleteLessonDialog } from "@/app/admin/courses/[courseId]/edit/_components/delete-lesson-dialog";
+import { DeleteChapterDialog } from "@/app/admin/courses/[courseId]/edit/_components/delete-chapter-dialog";
 
 type DndLesson = {
   id: string;
@@ -96,9 +98,10 @@ export const ChaptersList = ({
                     {chapter.title}
                   </p>
                 </div>
-                <Button variant="ghost" size="icon">
-                  <TrashIcon className="size-4" />
-                </Button>
+                <DeleteChapterDialog
+                  courseId={courseId}
+                  chapterId={chapter.id}
+                />
               </div>
               <CollapsibleContent>
                 <div className="p-1">
@@ -137,18 +140,21 @@ export const ChaptersList = ({
                                 </Link>
                               </div>
                             </div>
-                            <Button variant="ghost" size="icon">
-                              <TrashIcon className="size-4" />
-                            </Button>
+                            <DeleteLessonDialog
+                              courseId={courseId}
+                              chapterId={chapter.id}
+                              lessonId={lesson.id}
+                            />
                           </div>
                         )}
                       </SortableItem>
                     ))}
                   </SortableContext>
                   <div className="p-2">
-                    <Button variant="outline" className="w-full">
-                      Create new lesson
-                    </Button>
+                    <CreateLessonDialog
+                      courseId={courseId}
+                      chapterId={chapter.id}
+                    />
                   </div>
                 </div>
               </CollapsibleContent>

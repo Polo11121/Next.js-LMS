@@ -98,7 +98,7 @@ export const useChaptersDnd = (course: AdminCourse) => {
 
         setIsReordering(true);
 
-        toast.promise(reorderChapters(course.id, chapterToUpdate), {
+        toast.promise(reorderChapters(chapterToUpdate, course.id), {
           loading: "Reordering chapters...",
           success: (result) => {
             if (result.status === "success") {
@@ -182,7 +182,7 @@ export const useChaptersDnd = (course: AdminCourse) => {
 
         setIsReordering(true);
 
-        toast.promise(reorderLessons(course.id, chapterId, lessonToUpdate), {
+        toast.promise(reorderLessons(lessonToUpdate, chapterId, course.id), {
           loading: "Reordering lessons...",
           success: (result) => {
             if (result.status === "success") {

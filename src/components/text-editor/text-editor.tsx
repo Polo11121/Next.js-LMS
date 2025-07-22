@@ -8,7 +8,7 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 
 type TextEditorProps = {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   isError: boolean;
   isDisabled?: boolean;

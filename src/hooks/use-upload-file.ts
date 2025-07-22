@@ -4,19 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 as uuid } from "uuid";
 import { toast } from "sonner";
-import { FileState } from "@/lib/types";
+import { FileState, FileType } from "@/lib/types";
 import { constructUrl } from "@/functions/construct-url";
 
 type UseUploadFileProps = {
   onChange?: (value: string) => void;
   value?: string;
   isDisabled?: boolean;
+  fileType: FileType;
 };
 
 export const useUploadFile = ({
   onChange,
   value,
   isDisabled,
+  fileType,
 }: UseUploadFileProps) => {
   const fileUrl = constructUrl(value ?? "");
   const [fileState, setFileState] = useState<FileState>({
@@ -48,7 +50,7 @@ export const useUploadFile = ({
             fileName: file.name,
             contentType: file.type,
             size: file.size,
-            isImage: true,
+            isImage: fileType === "image",
           }),
         });
 
@@ -125,7 +127,7 @@ export const useUploadFile = ({
         }));
       }
     },
-    [onChange, fileState.objectUrl]
+    [onChange, fileState.objectUrl, fileType]
   );
 
   const onDrop = useCallback(
@@ -196,7 +198,7 @@ export const useUploadFile = ({
         progress: 0,
         isDeleting: false,
         isError: false,
-        fileType: "image",
+        fileType,
         objectUrl: undefined,
       });
 
@@ -231,10 +233,15 @@ export const useUploadFile = ({
       onDrop,
       multiple: false,
       maxFiles: 1,
-      maxSize: 1024 * 1024 * 5,
-      accept: {
-        "image/*": [],
-      },
+      maxSize: fileType === "image" ? 1024 * 1024 * 5 : 1024 * 1024 * 5000,
+      accept:
+        fileType === "image"
+          ? {
+              "image/*": [],
+            }
+          : {
+              "video/*": [],
+            },
       onDropRejected: (rejectedFiles) => {
         if (!rejectedFiles.length) {
           const tooManyFiles = rejectedFiles.find(
