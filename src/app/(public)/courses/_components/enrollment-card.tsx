@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { replaceUnderscore } from "@/functions/replace-underscore";
 import { CourseCategory, CourseLevel } from "@/lib/generated/prisma";
@@ -9,6 +8,9 @@ import {
   IconClock,
 } from "@tabler/icons-react";
 import { CheckIcon } from "lucide-react";
+import { EnrollmentButton } from "@/app/(public)/courses/[slug]/_components/enrollment-button";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 type EnrollmentCardProps = {
   price: number;
@@ -16,6 +18,8 @@ type EnrollmentCardProps = {
   level: CourseLevel;
   category: CourseCategory;
   lessons: number;
+  courseId: string;
+  isEnrolled: boolean;
 };
 
 export const EnrollmentCard = ({
@@ -24,6 +28,8 @@ export const EnrollmentCard = ({
   level,
   category,
   lessons,
+  courseId,
+  isEnrolled,
 }: EnrollmentCardProps) => (
   <div className="order-2 lg:col-span-1">
     <div className="sticky top-20">
@@ -108,7 +114,18 @@ export const EnrollmentCard = ({
               </li>
             </ul>
           </div>
-          <Button className="w-full">Enroll Now!</Button>
+          {isEnrolled ? (
+            <Link
+              href={`/courses/${courseId}`}
+              className={buttonVariants({
+                className: "w-full",
+              })}
+            >
+              View Course
+            </Link>
+          ) : (
+            <EnrollmentButton courseId={courseId} />
+          )}
           <p className="mt-3 text-center text-xs text-muted-foreground">
             30-day money-back guarantee
           </p>

@@ -8,6 +8,7 @@ import { IconCategory, IconChartBar, IconClock } from "@tabler/icons-react";
 import { ChaptersList } from "@/app/(public)/courses/_components/chapters-list";
 import { EnrollmentCard } from "@/app/(public)/courses/_components/enrollment-card";
 import Image from "next/image";
+import { userIsEnrolled } from "@/data/user/user-is-enrolled";
 
 type PublicCoursePageProps = {
   params: Promise<{ slug: string }>;
@@ -18,6 +19,7 @@ export default async function PublicCoursePage({
 }: PublicCoursePageProps) {
   const { slug } = await params;
   const course = await getPublicCourse(slug);
+  const isEnrolled = await userIsEnrolled(course.id);
 
   const lessons = course.chapters.reduce(
     (acc, chapter) => acc + chapter.lessons.length,
@@ -91,6 +93,8 @@ export default async function PublicCoursePage({
         level={course.level}
         category={course.category}
         lessons={lessons}
+        courseId={course.id}
+        isEnrolled={isEnrolled}
       />
     </div>
   );
