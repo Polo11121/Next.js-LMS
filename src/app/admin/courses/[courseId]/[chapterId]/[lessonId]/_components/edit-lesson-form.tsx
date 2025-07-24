@@ -123,6 +123,7 @@ export const EditLessonForm = ({
                   <FormLabel>Thumbnail Image</FormLabel>
                   <FormControl>
                     <FileUploader
+                      fileType="image"
                       isDisabled={isPending}
                       value={field.value}
                       onChange={field.onChange}

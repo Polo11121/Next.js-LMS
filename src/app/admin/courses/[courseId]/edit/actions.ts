@@ -13,22 +13,23 @@ import {
 } from "@/lib/zod-schemas";
 import { request } from "@arcjet/next";
 import { revalidatePath } from "next/cache";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    })
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 5,
-    })
-  );
+const aj = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 10,
+  })
+);
+
+const ajReorder = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 20,
+  })
+);
 
 export const editCourse = async (
   formData: CourseSchema,
@@ -92,9 +93,28 @@ export const reorderLessons = async (
   chapterId: string,
   courseId: string
 ): Promise<ActionResponse> => {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   try {
+    const req = await request();
+    const result = await ajReorder.protect(req, {
+      fingerprint: session.user.id as string,
+    });
+
+    if (result.isDenied()) {
+      if (result.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "You have been blocked due to rate limit",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Looks like you are a bot",
+        };
+      }
+    }
+
     if (!lessons || !lessons.length) {
       return {
         status: "error",
@@ -134,9 +154,28 @@ export const reorderChapters = async (
   chapters: { id: string; position: number }[],
   courseId: string
 ): Promise<ActionResponse> => {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   try {
+    const req = await request();
+    const result = await ajReorder.protect(req, {
+      fingerprint: session.user.id as string,
+    });
+
+    if (result.isDenied()) {
+      if (result.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "You have been blocked due to rate limit",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Looks like you are a bot",
+        };
+      }
+    }
+
     if (!chapters || !chapters.length) {
       return {
         status: "error",
@@ -175,9 +214,28 @@ export const reorderChapters = async (
 export const createChapter = async (
   formData: ChapterSchema
 ): Promise<ActionResponse> => {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   try {
+    const req = await request();
+    const result = await aj.protect(req, {
+      fingerprint: session.user.id as string,
+    });
+
+    if (result.isDenied()) {
+      if (result.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "You have been blocked due to rate limit",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Looks like you are a bot",
+        };
+      }
+    }
+
     const validatedData = chapterSchema.safeParse(formData);
 
     if (!validatedData.success) {
@@ -226,9 +284,28 @@ export const createChapter = async (
 export const createLesson = async (
   formData: LessonSchema
 ): Promise<ActionResponse> => {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   try {
+    const req = await request();
+    const result = await aj.protect(req, {
+      fingerprint: session.user.id as string,
+    });
+
+    if (result.isDenied()) {
+      if (result.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "You have been blocked due to rate limit",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Looks like you are a bot",
+        };
+      }
+    }
+
     const validatedData = lessonSchema.safeParse(formData);
 
     if (!validatedData.success) {
@@ -282,9 +359,28 @@ export const deleteLesson = async (
   chapterId: string,
   courseId: string
 ): Promise<ActionResponse> => {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   try {
+    const req = await request();
+    const result = await aj.protect(req, {
+      fingerprint: session.user.id as string,
+    });
+
+    if (result.isDenied()) {
+      if (result.reason.isRateLimit()) {
+        return {
+          status: "error",
+          message: "You have been blocked due to rate limit",
+        };
+      } else {
+        return {
+          status: "error",
+          message: "Looks like you are a bot",
+        };
+      }
+    }
+
     const chapter = await prisma.chapter.findUnique({
       where: {
         id: chapterId,

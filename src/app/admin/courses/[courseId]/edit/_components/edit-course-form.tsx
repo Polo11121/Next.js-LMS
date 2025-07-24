@@ -36,6 +36,7 @@ import {
 import { AdminCourse } from "@/data/admin/get-admin-course";
 import { apiResponseHandler } from "@/lib/api-response-handler";
 import slugify from "slugify";
+import { replaceUnderscore } from "@/functions/replace-underscore";
 
 type EditCourseFormProps = {
   course: AdminCourse;
@@ -164,6 +165,7 @@ export const EditCourseForm = ({ course }: EditCourseFormProps) => {
                   value={field.value}
                   onChange={field.onChange}
                   isError={!!form.formState.errors.fileKey}
+                  fileType="image"
                 />
               </FormControl>
               <FormMessage />
@@ -189,7 +191,7 @@ export const EditCourseForm = ({ course }: EditCourseFormProps) => {
                     <SelectContent>
                       {Object.values(CourseCategory).map((category) => (
                         <SelectItem key={category} value={category}>
-                          {category.replace(/_/g, " ")}
+                          {replaceUnderscore(category)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -232,10 +234,10 @@ export const EditCourseForm = ({ course }: EditCourseFormProps) => {
             name="duration"
             render={({ field }) => (
               <FormItem className="flex-1 w-full">
-                <FormLabel>Duration (minutes)</FormLabel>
+                <FormLabel>Duration (hours)</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Duration (minutes)"
+                    placeholder="Duration (hours)"
                     type="number"
                     disabled={isPending}
                     {...field}

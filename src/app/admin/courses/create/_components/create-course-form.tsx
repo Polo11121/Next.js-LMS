@@ -36,6 +36,7 @@ import { createCourse } from "@/app/admin/courses/create/actions";
 import { useRouter } from "next/navigation";
 import { apiResponseHandler } from "@/lib/api-response-handler";
 import { useFireConfetti } from "@/hooks/use-fire-confetti";
+import { replaceUnderscore } from "@/functions/replace-underscore";
 
 export const CreateCourseForm = () => {
   const fireConfetti = useFireConfetti();
@@ -198,7 +199,7 @@ export const CreateCourseForm = () => {
                     <SelectContent>
                       {Object.values(CourseCategory).map((category) => (
                         <SelectItem key={category} value={category}>
-                          {category.replace(/_/g, " ")}
+                          {replaceUnderscore(category)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -241,10 +242,10 @@ export const CreateCourseForm = () => {
             name="duration"
             render={({ field }) => (
               <FormItem className="flex-1 w-full">
-                <FormLabel>Duration (minutes)</FormLabel>
+                <FormLabel>Duration (hours)</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Duration (minutes)"
+                    placeholder="Duration (hours)"
                     type="number"
                     disabled={isPending}
                     {...field}

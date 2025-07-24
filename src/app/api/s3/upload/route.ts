@@ -1,14 +1,12 @@
 import { env } from "@/env";
 import { s3 } from "@/lib/s3-client";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { requireAdmin } from "@/data/admin/require-admin";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { requireAdmin } from "@/data/admin/require-admin";
 
 export const fileUploadSchema = z.object({
   fileName: z.string().min(1, "File name is required"),
@@ -17,20 +15,13 @@ export const fileUploadSchema = z.object({
   isImage: z.boolean(),
 });
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    })
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 2,
-    })
-  );
+const aj = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 2,
+  })
+);
 
 export const POST = async (request: Request) => {
   const sesssion = await requireAdmin();

@@ -2,7 +2,6 @@ export const NAVIGATION_ITEMS = [
   {
     label: "Home",
     href: "/",
-    active: true,
   },
   {
     label: "Courses",

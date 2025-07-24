@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { requireAdmin } from "@/data/admin/require-admin";
 import { s3 } from "@/lib/s3-client";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
@@ -10,20 +10,13 @@ const deleteSchema = z.object({
   key: z.string().min(1, "Key is required"),
 });
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    })
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 5,
-    })
-  );
+const aj = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 5,
+  })
+);
 
 export async function DELETE(request: Request) {
   const session = await requireAdmin();

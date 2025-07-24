@@ -5,22 +5,15 @@ import { prisma } from "@/lib/prisma";
 import { ActionResponse } from "@/lib/types";
 import { courseSchema, CourseSchema } from "@/lib/zod-schemas";
 import { request } from "@arcjet/next";
-import arcjet, { detectBot, fixedWindow } from "@/lib/arcjet";
+import arcjet, { fixedWindow } from "@/lib/arcjet";
 
-const aj = arcjet
-  .withRule(
-    detectBot({
-      mode: "LIVE",
-      allow: [],
-    })
-  )
-  .withRule(
-    fixedWindow({
-      mode: "LIVE",
-      window: "1m",
-      max: 5,
-    })
-  );
+const aj = arcjet.withRule(
+  fixedWindow({
+    mode: "LIVE",
+    window: "1m",
+    max: 10,
+  })
+);
 
 export const createCourse = async (
   formData: CourseSchema
