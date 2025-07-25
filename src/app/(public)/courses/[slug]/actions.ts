@@ -143,10 +143,10 @@ export const enrollCourse = async (
 
       const checkoutSession = await stripe.checkout.sessions.create({
         customer: stripeCustomerId,
-        line_items: [{ price: course.price, quantity: 1 }],
+        line_items: [{ price: course.price.toString(), quantity: 1 }],
         mode: "payment",
-        success_url: `${env.BETTER_AUTH_URL}/profile/success`,
-        cancel_url: `${env.BETTER_AUTH_URL}/profile/cancel`,
+        success_url: `${env.BETTER_AUTH_URL}/payment/success`,
+        cancel_url: `${env.BETTER_AUTH_URL}/payment/cancel`,
         metadata: {
           userId: session.user.id,
           courseId,
