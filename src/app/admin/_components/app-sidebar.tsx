@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { NavMain } from "@/app/admin/_components/nav-main";
 import { NavUser } from "@/app/admin/_components/nav-user";

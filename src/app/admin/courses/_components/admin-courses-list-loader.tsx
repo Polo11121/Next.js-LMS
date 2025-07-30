@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const AdminCoursesListLoader = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-7">
-    {Array.from({ length: 4 }).map((_, index) => (
+    {Array.from({ length: 3 }).map((_, index) => (
       <Card className="group relative py-0 gap-0" key={index}>
         <div className="absolute top-2 right-2 z-10 flex items-center gap-2">
           <Skeleton className="size-[36px] rounded-md" />

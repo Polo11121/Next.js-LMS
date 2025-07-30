@@ -1,16 +1,22 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
-import data from "@/app/admin/data.json";
+import { Suspense } from "react";
+import { DashboardChart } from "@/app/admin/_components/dashboard-chart";
+import { DashboardAdminStatsLoader } from "@/app/admin/_components/dashboard-admin-stats-loader";
+import { DashboardAdminStats } from "@/app/admin/_components/dashboard-admin-stats";
+import { getAdminChartsData } from "@/data/admin/get-admin-charts-data";
+import { DashboardRecentCourses } from "@/app/admin/_components/dashboard-recent-courses";
 
-const AdminPage = () => (
-  <>
-    <SectionCards />
-    <div className="px-4 lg:px-6">
-      <ChartAreaInteractive />
-    </div>
-    <DataTable data={data} />
-  </>
-);
+const AdminPage = async () => {
+  const chartsData = await getAdminChartsData();
+
+  return (
+    <>
+      <Suspense fallback={<DashboardAdminStatsLoader />}>
+        <DashboardAdminStats />
+      </Suspense>
+      <DashboardChart data={chartsData} />
+      <DashboardRecentCourses />
+    </>
+  );
+};
 
 export default AdminPage;

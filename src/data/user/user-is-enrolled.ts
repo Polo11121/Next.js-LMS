@@ -1,3 +1,5 @@
+import "server-only";
+
 import { EnrollmentStatus } from "@/lib/generated/prisma";
 import { requireUser } from "@/data/user/require-user";
 import { prisma } from "@/lib/prisma";

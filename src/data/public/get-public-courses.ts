@@ -1,3 +1,5 @@
+import "server-only";
+
 import { CourseStatus } from "@/lib/generated/prisma";
 import { prisma } from "@/lib/prisma";
 

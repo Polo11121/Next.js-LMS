@@ -1,9 +1,11 @@
+import "server-only";
+
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/data/admin/require-admin";
 import { notFound } from "next/navigation";
 
 export const getAdminCourse = async (courseId: string) => {
-  const session = await requireAdmin();
+  await requireAdmin();
 
   const course = await prisma.course.findUnique({
     select: {
@@ -39,7 +41,6 @@ export const getAdminCourse = async (courseId: string) => {
 
     where: {
       id: courseId,
-      userId: session.user.id,
     },
   });
 
